@@ -1,7 +1,7 @@
-package com.greengift.apiserver._core.errors.exception;
+package com.apiserver.greengift._core.errors.exception;
 
-import com.greengift.apiserver._core.errors.BaseException;
-import com.greengift.apiserver._core.utils.ApiUtils;
+import com.apiserver.greengift._core.errors.BaseException;
+import com.apiserver.greengift._core.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -16,14 +16,11 @@ public class UnauthorizedException extends RuntimeException {
     }
 
     public ApiUtils.ApiResult<?> body(){
-        return ApiUtils.error(exception);
+        return ApiUtils.error(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     public HttpStatus status(){
         return HttpStatus.UNAUTHORIZED;
     }
 
-    public int code() {
-        return exception.getCode();
-    }
 }

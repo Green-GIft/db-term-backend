@@ -1,7 +1,7 @@
-package com.greengift.apiserver._core.errors.exception;
+package com.apiserver.greengift._core.errors.exception;
 
-import com.greengift.apiserver._core.errors.BaseException;
-import com.greengift.apiserver._core.utils.ApiUtils;
+import com.apiserver.greengift._core.errors.BaseException;
+import com.apiserver.greengift._core.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -16,14 +16,10 @@ public class BadRequestException extends RuntimeException {
     }
 
     public ApiUtils.ApiResult<?> body(){
-        return ApiUtils.error(exception);
+        return ApiUtils.error(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     public HttpStatus status(){
         return HttpStatus.BAD_REQUEST;
-    }
-
-    public int code() {
-        return exception.getCode();
     }
 }

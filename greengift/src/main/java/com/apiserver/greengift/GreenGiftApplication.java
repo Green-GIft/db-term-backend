@@ -1,13 +1,13 @@
-package com.greengift.apiserver;
+package com.apiserver.greengift;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ApiServerApplication {
+public class GreenGiftApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApiServerApplication.class, args);
+		SpringApplication.run(GreenGiftApplication.class, args);
 	}
 
 }
