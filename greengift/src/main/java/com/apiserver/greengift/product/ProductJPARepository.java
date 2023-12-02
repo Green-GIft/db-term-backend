@@ -14,4 +14,11 @@ public interface ProductJPARepository extends JpaRepository<Product, Long> {
 
     @Query("select count(*) from Product p where p.festival = :festival")
     Long findProductCount(@Param("festival") Festival festival);
+
+    @Query("select p from Product p where p.extraAmount > 0 order by p.price asc")
+    List<Product> findAllProduct();
+
+    @Query("select p from Product p join fetch p.festival f join fetch f.festivalManager manager " +
+            "where manager.id = :userId")
+    List<Product> findAllByFestivalManager(Long userId);
 }

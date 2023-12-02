@@ -53,4 +53,8 @@ public class Product {
         this.rank = rank;
         this.price = price;
     }
+
+    public void updateAmount(Long extraAmount) {
+        this.extraAmount = this.extraAmount + extraAmount;
+    }
 }

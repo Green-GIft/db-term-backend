@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserFestivalJPARepository extends JpaRepository<UserFestival, Long> {
 
@@ -28,6 +29,10 @@ public interface UserFestivalJPARepository extends JpaRepository<UserFestival, L
     @Query("update UserFestival u set u.status = 'FAIL' where u.id in :nonSelectedIdList")
     void updateFailStatus(@Param("nonSelectedIdList") List<Long> nonSelectedIdList);
 
-    @Query("select u from UserFestival u join fetch u.participant p where p.id = :userId")
+    @Query("select u from UserFestival u join fetch u.festival join fetch u.participant p where p.id = :userId")
     List<UserFestival> findByParticipantId(Long userId);
+
+    @Query("select u from UserFestival u join fetch u.participant p join fetch u.festival " +
+            "where p.id = :userId and u.festival.id = :festivalId")
+    Optional<UserFestival> getUserFestivalByUserIdAndProductId(@Param("userId") Long userId, @Param("festivalId") Long festivalId);
 }
