@@ -10,6 +10,7 @@ public class FestivalResponse {
     }
 
     public record FindJoinedFestival(
+        Long festivalId,
         String image,
         String start_date,
         String end_date,
@@ -18,6 +19,7 @@ public class FestivalResponse {
     ) {}
 
     public record FindFestivalByUser(
+            Long festivalId,
             String image,
             String start_date,
             String end_date,

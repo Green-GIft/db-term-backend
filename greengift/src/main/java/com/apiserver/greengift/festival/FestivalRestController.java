@@ -61,7 +61,7 @@ public class FestivalRestController {
         return ResponseEntity.ok().body(ApiUtils.success(response));
     }
 
-    @GetMapping("/self")
+    @GetMapping("/manager")
     public ResponseEntity<?> findFestivalByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         List<FestivalResponse.FindFestivalByUser> response = festivalReadService.findFestivalByUser(userDetails.getUser());
         return ResponseEntity.ok().body(ApiUtils.success(response));

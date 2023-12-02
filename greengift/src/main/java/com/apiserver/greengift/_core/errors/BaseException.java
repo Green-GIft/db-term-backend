@@ -28,7 +28,12 @@ public enum BaseException {
     FESTIVAL_RANDOM_FINISHED("이미 추첨이 완료된 축제입니다.", 400),
     FESTIVAL_RESULT_NOT_FOUND("존재하지 않는 축제 결과입니다.", 404),
 
-    PRODUCT_LIMIT_3("축제 당 상품은 3개까지 등록 가능합니다.", 400);
+    PRODUCT_LIMIT_3("축제 당 상품은 3개까지 등록 가능합니다.", 400),
+    PRODUCT_NOT_FOUND("존재하지 않는 상품입니다.", 404),
+    PRODUCT_NO_AMOUNT("상품의 재고다 모두 소진되었습니다.", 400),
+    PRODUCT_NO_MONEY("상품을 구매할 마일리지가 부족합니다.", 400),
+
+    USER_FESTIVAL_NOT_FOUND("해당하는 유저 축제가 존재하지 않습니다.", 404);
 
     @Getter
     private final String message;

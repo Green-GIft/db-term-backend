@@ -2,8 +2,8 @@ package com.apiserver.greengift.festival;
 
 import com.apiserver.greengift.festival.user_festival.UserFestival;
 import com.apiserver.greengift.festival.user_festival.UserFestivalJPARepository;
-import com.apiserver.greengift.festival.user_product.UserProduct;
-import com.apiserver.greengift.festival.user_product.UserProductJPARepository;
+import com.apiserver.greengift.product.user_product.UserProduct;
+import com.apiserver.greengift.product.user_product.UserProductJPARepository;
 import com.apiserver.greengift.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +37,7 @@ public class FestivalReadService {
         return userFestivalList.stream()
                 .map(it ->
                         new FestivalResponse.FindJoinedFestival(
+                                it.getFestival().getId(),
                                 it.getFestival().getImage(),
                                 it.getFestival().getStartDate().toString(),
                                 it.getFestival().getEndDate().toString(),
@@ -51,6 +52,7 @@ public class FestivalReadService {
         return festivalList.stream()
                 .map( it ->
                         new FestivalResponse.FindFestivalByUser(
+                                it.getId(),
                                 it.getImage(),
                                 it.getStartDate().toString(),
                                 it.getEndDate().toString(),

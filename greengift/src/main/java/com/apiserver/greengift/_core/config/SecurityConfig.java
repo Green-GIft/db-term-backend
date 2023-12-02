@@ -83,25 +83,28 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/festival/join"),
                                 new AntPathRequestMatcher("/festival/result/**"),
                                 new AntPathRequestMatcher("/festival/all/**"),
-                                new AntPathRequestMatcher("/gift/**", "POST")
+                                new AntPathRequestMatcher("/product/buy/**"),
+                                new AntPathRequestMatcher("/product/all"),
+                                new AntPathRequestMatcher("/product/participant")
                         ).hasAuthority("participant")
 
                         .requestMatchers(
-                                new AntPathRequestMatcher("/trash", "POST")
+                                new AntPathRequestMatcher("/trash")
                         ).hasAuthority("trash_manager")
 
                         .requestMatchers(
                                 new AntPathRequestMatcher("/festival", "POST"),
                                 new AntPathRequestMatcher("/festival/product/**"),
-                                new AntPathRequestMatcher("/festival/self"),
+                                new AntPathRequestMatcher("/festival/manager"),
                                 new AntPathRequestMatcher("/festival/random/**"),
-                                new AntPathRequestMatcher("/gift/**", "GET")
+                                new AntPathRequestMatcher("/product/add/**", "POST"),
+                                new AntPathRequestMatcher("/product/manager", "GET")
                         ).hasAuthority("festival_manager")
 
                         .requestMatchers(
                                 new AntPathRequestMatcher("/user/grade"),
                                 new AntPathRequestMatcher("/festival/**"),
-                                new AntPathRequestMatcher("/gift/**"),
+                                new AntPathRequestMatcher("/product/**"),
                                 new AntPathRequestMatcher("/trash/**")
                         ).authenticated()
 

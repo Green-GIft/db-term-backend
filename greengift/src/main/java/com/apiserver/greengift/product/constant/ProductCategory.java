@@ -1,4 +1,4 @@
-package com.apiserver.greengift.festival.constant;
+package com.apiserver.greengift.product.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

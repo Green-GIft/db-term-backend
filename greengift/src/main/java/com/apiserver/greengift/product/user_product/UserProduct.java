@@ -1,7 +1,7 @@
-package com.apiserver.greengift.festival.user_product;
+package com.apiserver.greengift.product.user_product;
 
-import com.apiserver.greengift.festival.constant.ProductCategory;
-import com.apiserver.greengift.festival.product.Product;
+import com.apiserver.greengift.product.constant.ProductCategory;
+import com.apiserver.greengift.product.Product;
 import com.apiserver.greengift.festival.user_festival.UserFestival;
 import jakarta.persistence.*;
 import lombok.*;
