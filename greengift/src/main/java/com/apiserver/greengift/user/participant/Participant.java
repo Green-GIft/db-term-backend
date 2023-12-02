@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Participant extends User {
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
-    @Column(nullable = false)
+    @Column
     private Long mileage;
 
     @Builder
