@@ -1,6 +1,6 @@
 package com.apiserver.greengift.festival;
 
-import com.apiserver.greengift.festival.product.Product;
+import com.apiserver.greengift.gift.Product;
 import com.apiserver.greengift.user.festival_manager.FestivalManager;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -69,7 +69,10 @@ public class FestivalRequest {
             Long extra_amount,
 
             @NotEmpty(message = "이미지는 비어있으면 안됩니다.")
-            String image
+            String image,
+
+            @NotNull(message = "가격은 비어있으면 안됩니다.")
+            Long price
     ){
         public Product toProduct(Festival festival){
             return Product.builder()
@@ -80,6 +83,7 @@ public class FestivalRequest {
                     .image(image)
                     .company(company)
                     .rank(rank)
+                    .price(price)
                     .build();
         }
     }

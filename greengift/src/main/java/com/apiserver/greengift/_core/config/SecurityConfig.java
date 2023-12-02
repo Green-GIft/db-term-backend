@@ -83,19 +83,22 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/festival/join"),
                                 new AntPathRequestMatcher("/festival/result/**"),
                                 new AntPathRequestMatcher("/festival/all/**"),
-                                new AntPathRequestMatcher("/gift/**", "POST")
+                                new AntPathRequestMatcher("/gift/buy/**"),
+                                new AntPathRequestMatcher("/gift/all"),
+                                new AntPathRequestMatcher("/gift/self")
                         ).hasAuthority("participant")
 
                         .requestMatchers(
-                                new AntPathRequestMatcher("/trash", "POST")
+                                new AntPathRequestMatcher("/trash")
                         ).hasAuthority("trash_manager")
 
                         .requestMatchers(
                                 new AntPathRequestMatcher("/festival", "POST"),
                                 new AntPathRequestMatcher("/festival/product/**"),
-                                new AntPathRequestMatcher("/festival/self"),
+                                new AntPathRequestMatcher("/festival/manager"),
                                 new AntPathRequestMatcher("/festival/random/**"),
-                                new AntPathRequestMatcher("/gift/**", "GET")
+                                new AntPathRequestMatcher("/gift/**", "POST"),
+                                new AntPathRequestMatcher("/gift/manager", "GET")
                         ).hasAuthority("festival_manager")
 
                         .requestMatchers(
