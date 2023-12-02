@@ -69,7 +69,7 @@ public class UserService {
     private void checkEmailAlreadyExist(String email) {
         Optional<User> userOptional = userJPARepository.findByEmail(email);
         if (userOptional.isPresent()){
-            throw new BadRequestException(BaseException.USER_EMAIL_EXIST);
+            throw new BadRequestException(BaseException.USER_DUPLICATED_EMAIL);
         }
     }
     private void checkPasswordIsSame(String password, String password2) {
