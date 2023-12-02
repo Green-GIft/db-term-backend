@@ -2,8 +2,8 @@ package com.apiserver.greengift.festival;
 
 import com.apiserver.greengift.festival.user_festival.UserFestival;
 import com.apiserver.greengift.festival.user_festival.UserFestivalJPARepository;
-import com.apiserver.greengift.gift.user_product.UserProduct;
-import com.apiserver.greengift.gift.user_product.UserProductJPARepository;
+import com.apiserver.greengift.product.user_product.UserProduct;
+import com.apiserver.greengift.product.user_product.UserProductJPARepository;
 import com.apiserver.greengift.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.apiserver.greengift.gift;
+package com.apiserver.greengift.product;
 
 import com.apiserver.greengift.festival.Festival;
 import jakarta.persistence.*;

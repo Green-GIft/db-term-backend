@@ -1,6 +1,6 @@
 package com.apiserver.greengift.festival;
 
-import com.apiserver.greengift.gift.Product;
+import com.apiserver.greengift.product.Product;
 import com.apiserver.greengift.user.festival_manager.FestivalManager;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
