@@ -1,4 +1,4 @@
-package com.apiserver.greengift.festival.product;
+package com.apiserver.greengift.gift;
 
 import com.apiserver.greengift.festival.Festival;
 import org.springframework.data.jpa.repository.JpaRepository;

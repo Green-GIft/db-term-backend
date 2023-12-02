@@ -1,4 +1,4 @@
-package com.apiserver.greengift.festival.product;
+package com.apiserver.greengift.gift;
 
 import com.apiserver.greengift.festival.Festival;
 import jakarta.persistence.*;
@@ -37,9 +37,12 @@ public class Product {
     @Column(nullable = false)
     private Long rank;
 
+    @Column(nullable = false)
+    private Long price;
+
     @Builder
     public Product(Long id, Festival festival, String name, LocalDate dueDate,
-                   Long extraAmount, String image, String company, Long rank){
+                   Long extraAmount, String image, String company, Long rank, Long price){
         this.id = id;
         this.festival = festival;
         this.name = name;
@@ -48,5 +51,6 @@ public class Product {
         this.image = image;
         this.company = company;
         this.rank = rank;
+        this.price = price;
     }
 }
