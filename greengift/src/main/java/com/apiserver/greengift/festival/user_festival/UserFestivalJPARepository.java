@@ -26,8 +26,8 @@ public interface UserFestivalJPARepository extends JpaRepository<UserFestival, L
     List<UserFestival> findParticipantAndFestival(@Param("participant") Participant participant, @Param("festival") Festival festival);
 
     @Modifying
-    @Query("update UserFestival u set u.status = 'FAIL' where u.id in :nonSelectedIdList")
-    void updateFailStatus(@Param("nonSelectedIdList") List<Long> nonSelectedIdList);
+    @Query("update UserFestival u set u.status = 'FAIL' where u in :nonSelectedIdList")
+    void updateFailStatus(List<UserFestival> nonSelectedIdList);
 
     @Query("select u from UserFestival u join fetch u.festival join fetch u.participant p where p.id = :userId")
     List<UserFestival> findByParticipantId(Long userId);
@@ -35,4 +35,8 @@ public interface UserFestivalJPARepository extends JpaRepository<UserFestival, L
     @Query("select u from UserFestival u join fetch u.participant p join fetch u.festival " +
             "where p.id = :userId and u.festival.id = :festivalId")
     Optional<UserFestival> getUserFestivalByUserIdAndProductId(@Param("userId") Long userId, @Param("festivalId") Long festivalId);
+
+    @Modifying
+    @Query("update UserFestival u set u.status = 'SUCCESS' where u in :userFestivalList")
+    void updateSuccessStatus(List<UserFestival> userFestivalList);
 }
