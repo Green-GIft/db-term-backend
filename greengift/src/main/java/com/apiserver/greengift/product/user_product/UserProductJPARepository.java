@@ -13,7 +13,7 @@ public interface UserProductJPARepository extends JpaRepository<UserProduct, Lon
             "join fetch u.product " +
             "join fetch uf.participant p " +
             "join fetch uf.festival uff " +
-            "where uff.id = :festivalId and p.id = :userId")
+            "where uff.id = :festivalId and p.id = :userId and u.category = 'FESTIVAL'")
     Optional<UserProduct> findByUserIdAndFestivalId(@Param("userId") Long userId, @Param("festivalId") Long festivalId);
 
     @Query("select u from UserProduct u join fetch u.userFestival uf " +

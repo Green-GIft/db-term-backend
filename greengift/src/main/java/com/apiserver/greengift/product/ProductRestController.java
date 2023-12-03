@@ -2,6 +2,7 @@ package com.apiserver.greengift.product;
 
 import com.apiserver.greengift._core.security.CustomUserDetails;
 import com.apiserver.greengift._core.utils.ApiUtils;
+import com.apiserver.greengift.festival.FestivalRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,15 @@ public class ProductRestController {
     private final ProductWriteService productWriteService;
     private final ProductReadService productReadService;
 
-    @PostMapping("/add/{productId}")
+    @PostMapping("/{festivalId}")
+    public ResponseEntity<?> addProduct(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                        @RequestBody @Valid FestivalRequest.AddProduct requestDTO,
+                                        @PathVariable @Min(1) Long festivalId) {
+        productWriteService.addProduct(userDetails.getUser(), requestDTO, festivalId);
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    @PostMapping("/amount/{productId}")
     public ResponseEntity<?> addAmount(@AuthenticationPrincipal CustomUserDetails userDetails,
                                        @RequestBody @Valid ProductRequest.AddProductAmount requestDTO,
                                        @PathVariable @Min(1) Long productId) {

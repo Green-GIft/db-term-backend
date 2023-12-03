@@ -1,5 +1,9 @@
 package com.apiserver.greengift.festival;
 
+import com.apiserver.greengift._core.errors.BaseException;
+import com.apiserver.greengift._core.errors.exception.BadRequestException;
+import com.apiserver.greengift._core.errors.exception.NotFoundException;
+import com.apiserver.greengift.festival.constant.FestivalStatus;
 import com.apiserver.greengift.festival.user_festival.UserFestival;
 import com.apiserver.greengift.festival.user_festival.UserFestivalJPARepository;
 import com.apiserver.greengift.product.user_product.UserProduct;
@@ -11,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -19,17 +22,19 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class FestivalReadService {
     private final UserFestivalJPARepository userFestivalJPARepository;
-
     private final UserProductJPARepository userProductJPARepository;
     private final FestivalJPARepository festivalJPARepository;
 
     public FestivalResponse.FindFestivalResult findFestivalResult(User user, Long festivalId) {
-        Optional<UserProduct> userProduct = userProductJPARepository.findByUserIdAndFestivalId(user.getId(), festivalId);
-        return userProduct.map(product -> new FestivalResponse.FindFestivalResult(
-                product.getProduct().getImage(),
-                product.getProduct().getName(),
-                product.getProduct().getDueDate().toString()
-        )).orElse(null);
+        UserFestival userFestival = getUserFestival(user.getId(), festivalId);
+        if (userFestival.getStatus() == FestivalStatus.FAIL) {
+            return null;
+        }
+        else if (userFestival.getStatus() == FestivalStatus.SUCCESS){
+            UserProduct userProduct = getUserProduct(user.getId(), festivalId);
+            return getFindFestivalResult(userProduct);
+        }
+        else throw new BadRequestException(BaseException.FESTIVAL_RESULT_NOT_FOUND);
     }
 
     public List<FestivalResponse.FindJoinedFestival> findJoinedFestival(User user) {
@@ -59,5 +64,23 @@ public class FestivalReadService {
                                 it.getName()
                         )
                 ).toList();
+    }
+
+    private static FestivalResponse.FindFestivalResult getFindFestivalResult(UserProduct userProduct) {
+        return new FestivalResponse.FindFestivalResult(
+                userProduct.getProduct().getImage(),
+                userProduct.getProduct().getName(),
+                userProduct.getProduct().getDueDate().toString()
+        );
+    }
+    private UserProduct getUserProduct(Long userId, Long festivalId){
+        return userProductJPARepository.findByUserIdAndFestivalId(userId, festivalId).orElseThrow(
+                () ->  new NotFoundException(BaseException.USER_PRODUCT_NOT_FOUND)
+        );
+    }
+    private UserFestival getUserFestival(Long userId, Long festivalId) {
+        return userFestivalJPARepository.getUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
+                () -> new NotFoundException(BaseException.USER_FESTIVAL_NOT_FOUND)
+        );
     }
 }

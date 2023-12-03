@@ -3,14 +3,14 @@ package com.apiserver.greengift.festival;
 import com.apiserver.greengift._core.errors.BaseException;
 import com.apiserver.greengift._core.errors.exception.BadRequestException;
 import com.apiserver.greengift._core.errors.exception.NotFoundException;
-import com.apiserver.greengift._core.errors.exception.UnauthorizedException;
 import com.apiserver.greengift.festival.constant.FestivalStatus;
-import com.apiserver.greengift.product.constant.ProductCategory;
-import com.apiserver.greengift.product.Product;
-import com.apiserver.greengift.product.ProductJPARepository;
 import com.apiserver.greengift.festival.user_festival.UserFestival;
 import com.apiserver.greengift.festival.user_festival.UserFestivalJPARepository;
+import com.apiserver.greengift.product.Product;
+import com.apiserver.greengift.product.ProductJPARepository;
+import com.apiserver.greengift.product.constant.ProductCategory;
 import com.apiserver.greengift.product.user_product.UserProduct;
+import com.apiserver.greengift.product.user_product.UserProductJDBCRepository;
 import com.apiserver.greengift.product.user_product.UserProductJPARepository;
 import com.apiserver.greengift.user.User;
 import com.apiserver.greengift.user.festival_manager.FestivalManager;
@@ -23,10 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,7 +39,7 @@ public class FestivalWriteService {
     private final FestivalJPARepository festivalJPARepository;
     private final ProductJPARepository productJPARepository;
     private final UserFestivalJPARepository userFestivalJPARepository;
-    private final UserProductJPARepository userProductRepository;
+    private final UserProductJDBCRepository userProductJDBCRepository;
 
     public void addFestival(User user, FestivalRequest.AddFestival requestDTO) {
         FestivalManager festivalManager = findFestivalManagerByUserId(user.getId());
@@ -50,16 +50,13 @@ public class FestivalWriteService {
         checkValidDate(start_date, end_date);
         festivalJPARepository.save(requestDTO.toFestival(festivalManager, start_date, end_date));
     }
-    public void addProduct(User user, FestivalRequest.AddProduct requestDTO, Long festivalId) {
-        Festival festival = getFestivalById(festivalId);
-        checkFestivalUserEqualToUser(festival, user);
-        checkFestivalProductCount(festival);
-        productJPARepository.save(requestDTO.toProduct(festival));
-    }
     public void joinFestival(User user, FestivalRequest.JoinFestival requestDTO) {
         Festival festival = getFestivalByName(requestDTO.name());
+        checkFestivalFinished(festival);
+
         Participant participant = findParticipantByUserId(user.getId());
         checkDuplicatedFestival(participant, festival);
+
         UserFestival userFestival = getUserFestival(festival, participant);
         userFestivalJPARepository.save(userFestival);
     }
@@ -86,20 +83,21 @@ public class FestivalWriteService {
     }
     private void updateMileage(Festival festival, List<UserFestival> userFestivalList){
         List<UserFestival> nonSelectedList = userFestivalJPARepository.findUserByFestival(festival, userFestivalList);
-        List<Long> nonSelectedParticipantList = nonSelectedList.stream().map(it->it.getParticipant().getId()).collect(Collectors.toList());
-        List<Long> nonSelectedUserFestivalList = nonSelectedList.stream().map(UserFestival::getId).toList();
+        List<Long> nonSelectedParticipantList = nonSelectedList.stream().map(it->it.getParticipant().getId()).toList();
         participantJPARepository.updateMileage(nonSelectedParticipantList);
-        userFestivalJPARepository.updateFailStatus(nonSelectedUserFestivalList);
+        userFestivalJPARepository.updateFailStatus(nonSelectedList);
         festival.finished();
     }
     private void addUserProduct(List<UserFestival> userFestivalList, List<Product> productList){
+        List<UserProduct> userProductList = new ArrayList<>();
         for (int i=0; i<3; i++){
             UserFestival userFestival = userFestivalList.get(i);
             Product product = productList.get(i);
             UserProduct userProduct = getUserProduct(userFestival, product);
-            userProductRepository.save(userProduct);
-            userFestival.updateStatus(FestivalStatus.SUCCESS);
+            userProductList.add(userProduct);
         }
+        userFestivalJPARepository.updateSuccessStatus(userFestivalList);
+        userProductJDBCRepository.batchInsertUserProduct(userProductList);
     }
     private void checkDuplicatedFestival(Participant participant, Festival festival) {
         List<UserFestival> festivalList = userFestivalJPARepository.findParticipantAndFestival(participant, festival);
@@ -124,12 +122,6 @@ public class FestivalWriteService {
                 .category(ProductCategory.FESTIVAL)
                 .build();
     }
-    private void checkFestivalProductCount(Festival festival){
-        Long count = productJPARepository.findProductCount(festival);
-        if (count >= 3){
-            throw new BadRequestException(BaseException.PRODUCT_LIMIT_3);
-        }
-    }
     private Participant findParticipantByUserId(Long userId) {
         return participantJPARepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(BaseException.USER_NOT_FOUND)
@@ -146,11 +138,6 @@ public class FestivalWriteService {
         return festivalJPARepository.findByName(name).orElseThrow(
                 () -> new NotFoundException(BaseException.FESTIVAL_NOT_FOUND)
         );
-    }
-    private void checkFestivalUserEqualToUser(Festival festival, User user) {
-        if (!Objects.equals(festival.getFestivalManager().getId(), user.getId())){
-            throw new UnauthorizedException(BaseException.PERMISSION_DENIED_METHOD_ACCESS);
-        }
     }
     private Festival getFestivalById(Long festivalId) {
         return festivalJPARepository.findById(festivalId).orElseThrow(

@@ -97,7 +97,7 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/festival/product/**"),
                                 new AntPathRequestMatcher("/festival/manager"),
                                 new AntPathRequestMatcher("/festival/random/**"),
-                                new AntPathRequestMatcher("/product/add/**", "POST"),
+                                new AntPathRequestMatcher("/product/**", "POST"),
                                 new AntPathRequestMatcher("/product/manager", "GET")
                         ).hasAuthority("festival_manager")
 
