@@ -28,7 +28,7 @@ public class ProductRestController {
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
-    @PostMapping("/add/{productId}")
+    @PostMapping("/amount/{productId}")
     public ResponseEntity<?> addAmount(@AuthenticationPrincipal CustomUserDetails userDetails,
                                        @RequestBody @Valid ProductRequest.AddProductAmount requestDTO,
                                        @PathVariable @Min(1) Long productId) {
