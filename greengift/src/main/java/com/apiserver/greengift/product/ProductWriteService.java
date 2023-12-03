@@ -4,6 +4,10 @@ import com.apiserver.greengift._core.errors.BaseException;
 import com.apiserver.greengift._core.errors.exception.BadRequestException;
 import com.apiserver.greengift._core.errors.exception.ForbiddenException;
 import com.apiserver.greengift._core.errors.exception.NotFoundException;
+import com.apiserver.greengift._core.errors.exception.UnauthorizedException;
+import com.apiserver.greengift.festival.Festival;
+import com.apiserver.greengift.festival.FestivalJPARepository;
+import com.apiserver.greengift.festival.FestivalRequest;
 import com.apiserver.greengift.festival.user_festival.UserFestival;
 import com.apiserver.greengift.festival.user_festival.UserFestivalJPARepository;
 import com.apiserver.greengift.product.constant.ProductCategory;
@@ -23,10 +27,17 @@ import java.util.Objects;
 @Transactional
 public class ProductWriteService {
 
+    private final FestivalJPARepository festivalJPARepository;
     private final ProductJPARepository productJPARepository;
     private final UserProductJPARepository userProductJPARepository;
     private final UserFestivalJPARepository userFestivalJPARepository;
 
+    public void addProduct(User user, FestivalRequest.AddProduct requestDTO, Long festivalId) {
+        Festival festival = getFestivalById(festivalId);
+        checkFestivalUserEqualToUser(festival, user);
+        checkFestivalProductCount(festival);
+        productJPARepository.save(requestDTO.toProduct(festival));
+    }
     public void addAmount(User user, ProductRequest.AddProductAmount requestDTO, Long productId) {
         Product product = getProductById(productId);
         checkAddProductPermission(user, product);
@@ -73,6 +84,22 @@ public class ProductWriteService {
     private void checkAddProductPermission(User user, Product product) {
         if (!Objects.equals(user.getId(), product.getFestival().getFestivalManager().getId())){
             throw new ForbiddenException(BaseException.PERMISSION_DENIED_METHOD_ACCESS);
+        }
+    }
+    private void checkFestivalProductCount(Festival festival){
+        Long count = productJPARepository.findProductCount(festival);
+        if (count >= 3){
+            throw new BadRequestException(BaseException.PRODUCT_LIMIT_3);
+        }
+    }
+    private Festival getFestivalById(Long festivalId) {
+        return festivalJPARepository.findById(festivalId).orElseThrow(
+                () -> new NotFoundException(BaseException.FESTIVAL_NOT_FOUND)
+        );
+    }
+    private void checkFestivalUserEqualToUser(Festival festival, User user) {
+        if (!Objects.equals(festival.getFestivalManager().getId(), user.getId())){
+            throw new UnauthorizedException(BaseException.PERMISSION_DENIED_METHOD_ACCESS);
         }
     }
 }

@@ -50,16 +50,13 @@ public class FestivalWriteService {
         checkValidDate(start_date, end_date);
         festivalJPARepository.save(requestDTO.toFestival(festivalManager, start_date, end_date));
     }
-    public void addProduct(User user, FestivalRequest.AddProduct requestDTO, Long festivalId) {
-        Festival festival = getFestivalById(festivalId);
-        checkFestivalUserEqualToUser(festival, user);
-        checkFestivalProductCount(festival);
-        productJPARepository.save(requestDTO.toProduct(festival));
-    }
     public void joinFestival(User user, FestivalRequest.JoinFestival requestDTO) {
         Festival festival = getFestivalByName(requestDTO.name());
+        checkFestivalFinished(festival);
+
         Participant participant = findParticipantByUserId(user.getId());
         checkDuplicatedFestival(participant, festival);
+
         UserFestival userFestival = getUserFestival(festival, participant);
         userFestivalJPARepository.save(userFestival);
     }
@@ -124,12 +121,6 @@ public class FestivalWriteService {
                 .category(ProductCategory.FESTIVAL)
                 .build();
     }
-    private void checkFestivalProductCount(Festival festival){
-        Long count = productJPARepository.findProductCount(festival);
-        if (count >= 3){
-            throw new BadRequestException(BaseException.PRODUCT_LIMIT_3);
-        }
-    }
     private Participant findParticipantByUserId(Long userId) {
         return participantJPARepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(BaseException.USER_NOT_FOUND)
@@ -146,11 +137,6 @@ public class FestivalWriteService {
         return festivalJPARepository.findByName(name).orElseThrow(
                 () -> new NotFoundException(BaseException.FESTIVAL_NOT_FOUND)
         );
-    }
-    private void checkFestivalUserEqualToUser(Festival festival, User user) {
-        if (!Objects.equals(festival.getFestivalManager().getId(), user.getId())){
-            throw new UnauthorizedException(BaseException.PERMISSION_DENIED_METHOD_ACCESS);
-        }
     }
     private Festival getFestivalById(Long festivalId) {
         return festivalJPARepository.findById(festivalId).orElseThrow(
