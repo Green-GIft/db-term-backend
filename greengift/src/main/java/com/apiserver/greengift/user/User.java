@@ -1,5 +1,6 @@
 package com.apiserver.greengift.user;
 
+import com.apiserver.greengift.user.constant.Grade;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,9 +29,27 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
+
+    @Column
+    private Long mileage;
+
+    @Column
+    private Long trashCount;
+
     @Transient
     public String getDtype(){
         DiscriminatorValue val = this.getClass().getAnnotation(DiscriminatorValue.class);
         return val == null ? null : val.value();
+    }
+
+    public void addTrashCount(){
+        this.trashCount = this.trashCount + 1;
+    }
+
+    public void updateGrade(Grade grade){
+        this.grade = grade;
     }
 }

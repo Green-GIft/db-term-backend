@@ -1,7 +1,7 @@
 package com.apiserver.greengift.festival.user_festival;
 
 import com.apiserver.greengift.festival.Festival;
-import com.apiserver.greengift.user.participant.Participant;
+import com.apiserver.greengift.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface UserFestivalJPARepository extends JpaRepository<UserFestival, Long> {
 
-    @Query("select u from UserFestival u join fetch u.participant p join fetch u.festival f "+
+    @Query("select u from UserFestival u join fetch u.user p join fetch u.festival f "+
             "where f = :festival " +
             "and u not in :selectedList " +
             "and u.status = 'READY'")
@@ -22,20 +22,24 @@ public interface UserFestivalJPARepository extends JpaRepository<UserFestival, L
             "and u.status = 'READY' order by RAND() limit 3")
     List<UserFestival> findUserFestivalByRandom(@Param("festival") Festival festival);
 
-    @Query("select u from UserFestival u where u.festival = :festival and u.participant = :participant")
-    List<UserFestival> findParticipantAndFestival(@Param("participant") Participant participant, @Param("festival") Festival festival);
+    @Query("select u from UserFestival u join fetch u.festival join fetch u.user p where p.id = :userId")
+    List<UserFestival> findByParticipantId(Long userId);
+
+    @Query("select u from UserFestival u where u.festival = :festival and u.user = :user")
+    List<UserFestival> findParticipantAndFestival(@Param("user") User user, @Param("festival") Festival festival);
+
+    @Query("select u from UserFestival u join fetch u.user p join fetch u.festival " +
+            "where p.id = :userId and u.festival.id = :festivalId")
+    Optional<UserFestival> findUserFestivalByUserIdAndProductId(@Param("userId") Long userId, @Param("festivalId") Long festivalId);
+
+    @Query("select u from UserFestival u " +
+            "where u.user.email = :email and u.festival.id = :festivalId")
+    Optional<UserFestival> findByEmailAndFestivalId(@Param("email") String email, @Param("festivalId") Long festivalId);
 
     @Modifying
     @Query("update UserFestival u set u.status = 'FAIL' where u in :nonSelectedIdList")
     void updateFailStatus(List<UserFestival> nonSelectedIdList);
-
-    @Query("select u from UserFestival u join fetch u.festival join fetch u.participant p where p.id = :userId")
-    List<UserFestival> findByParticipantId(Long userId);
-
-    @Query("select u from UserFestival u join fetch u.participant p join fetch u.festival " +
-            "where p.id = :userId and u.festival.id = :festivalId")
-    Optional<UserFestival> getUserFestivalByUserIdAndProductId(@Param("userId") Long userId, @Param("festivalId") Long festivalId);
-
+    
     @Modifying
     @Query("update UserFestival u set u.status = 'SUCCESS' where u in :userFestivalList")
     void updateSuccessStatus(List<UserFestival> userFestivalList);

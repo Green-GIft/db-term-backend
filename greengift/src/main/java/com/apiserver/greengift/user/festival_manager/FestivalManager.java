@@ -16,6 +16,6 @@ public class FestivalManager extends User {
 
     @Builder
     public FestivalManager(Long id, String username, String email, String password){
-        super(id, username, email, password);
+        super(id, username, email, password, null, null, null);
     }
 }

@@ -11,11 +11,10 @@ import com.apiserver.greengift.product.ProductJPARepository;
 import com.apiserver.greengift.product.constant.ProductCategory;
 import com.apiserver.greengift.product.user_product.UserProduct;
 import com.apiserver.greengift.product.user_product.UserProductJDBCRepository;
-import com.apiserver.greengift.product.user_product.UserProductJPARepository;
 import com.apiserver.greengift.user.User;
+import com.apiserver.greengift.user.UserJPARepository;
 import com.apiserver.greengift.user.festival_manager.FestivalManager;
 import com.apiserver.greengift.user.festival_manager.FestivalManagerJPARepository;
-import com.apiserver.greengift.user.participant.Participant;
 import com.apiserver.greengift.user.participant.ParticipantJPARepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,10 +53,10 @@ public class FestivalWriteService {
         Festival festival = getFestivalByName(requestDTO.name());
         checkFestivalFinished(festival);
 
-        Participant participant = findParticipantByUserId(user.getId());
-        checkDuplicatedFestival(participant, festival);
+        User user1 = findParticipantByUserId(user.getId());
+        checkDuplicatedFestival(user1, festival);
 
-        UserFestival userFestival = getUserFestival(festival, participant);
+        UserFestival userFestival = getUserFestival(festival, user1);
         userFestivalJPARepository.save(userFestival);
     }
     public void findRandomResult(User user, Long festivalId) {
@@ -84,7 +82,7 @@ public class FestivalWriteService {
     }
     private void updateMileage(Festival festival, List<UserFestival> userFestivalList){
         List<UserFestival> nonSelectedList = userFestivalJPARepository.findUserByFestival(festival, userFestivalList);
-        List<Long> nonSelectedParticipantList = nonSelectedList.stream().map(it->it.getParticipant().getId()).toList();
+        List<Long> nonSelectedParticipantList = nonSelectedList.stream().map(it->it.getUser().getId()).toList();
         participantJPARepository.updateMileage(nonSelectedParticipantList);
         userFestivalJPARepository.updateFailStatus(nonSelectedList);
         festival.finished();
@@ -100,8 +98,8 @@ public class FestivalWriteService {
         userFestivalJPARepository.updateSuccessStatus(userFestivalList);
         userProductJDBCRepository.batchInsertUserProduct(userProductList);
     }
-    private void checkDuplicatedFestival(Participant participant, Festival festival) {
-        List<UserFestival> festivalList = userFestivalJPARepository.findParticipantAndFestival(participant, festival);
+    private void checkDuplicatedFestival(User user, Festival festival) {
+        List<UserFestival> festivalList = userFestivalJPARepository.findParticipantAndFestival(user, festival);
         if (!festivalList.isEmpty()){
             throw new BadRequestException(BaseException.FESTIVAL_DUPLICATED_USER);
         }
@@ -123,15 +121,15 @@ public class FestivalWriteService {
                 .category(ProductCategory.FESTIVAL)
                 .build();
     }
-    private Participant findParticipantByUserId(Long userId) {
-        return participantJPARepository.findById(userId).orElseThrow(
+    private User findParticipantByUserId(Long userId) {
+        return userJPARepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(BaseException.USER_NOT_FOUND)
         );
     }
-    private UserFestival getUserFestival(Festival festival, Participant participant){
+    private UserFestival getUserFestival(Festival festival, User user){
         return UserFestival.builder()
                 .festival(festival)
-                .participant(participant)
+                .user(user)
                 .status(FestivalStatus.WAITING)
                 .build();
     }

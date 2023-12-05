@@ -2,9 +2,12 @@ package com.apiserver.greengift.festival.user_festival;
 
 import com.apiserver.greengift.festival.Festival;
 import com.apiserver.greengift.festival.constant.FestivalStatus;
-import com.apiserver.greengift.user.participant.Participant;
+import com.apiserver.greengift.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_festival_tb")
@@ -17,7 +20,7 @@ public class UserFestival {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Participant participant;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Festival festival;
@@ -27,9 +30,9 @@ public class UserFestival {
     private FestivalStatus status;
 
     @Builder
-    public UserFestival(Long id, Participant participant, Festival festival, FestivalStatus status){
+    public UserFestival(Long id, User user, Festival festival, FestivalStatus status){
         this.id = id;
-        this.participant = participant;
+        this.user = user;
         this.festival = festival;
         this.status = status;
     }
