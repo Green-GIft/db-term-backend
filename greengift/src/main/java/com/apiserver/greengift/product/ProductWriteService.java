@@ -14,6 +14,8 @@ import com.apiserver.greengift.product.constant.ProductCategory;
 import com.apiserver.greengift.product.user_product.UserProduct;
 import com.apiserver.greengift.product.user_product.UserProductJPARepository;
 import com.apiserver.greengift.user.User;
+import com.apiserver.greengift.user.participant.Participant;
+import com.apiserver.greengift.user.participant.ParticipantJPARepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ProductWriteService {
     private final ProductJPARepository productJPARepository;
     private final UserProductJPARepository userProductJPARepository;
     private final UserFestivalJPARepository userFestivalJPARepository;
+    private final ParticipantJPARepository participantJPARepository;
 
     public void addProduct(User user, FestivalRequest.AddProduct requestDTO, Long festivalId) {
         Festival festival = getFestivalById(festivalId);
@@ -41,21 +44,28 @@ public class ProductWriteService {
     public void addAmount(User user, ProductRequest.AddProductAmount requestDTO, Long productId) {
         Product product = getProductById(productId);
         checkAddProductPermission(user, product);
-        product.updateAmount(requestDTO.extra_amount());
+        product.updateAmount(requestDTO.extraAmount());
     }
     public void buyProduct(User user, Long productId) {
         Product product = getProductById(productId);
         checkProductAmount(product);
 
-        UserFestival userFestival = getUserFestivalByUserIdAndProductId(product, user.getId());
-        checkMileageValid(userFestival, product);
+        Participant participant = findParticipantById(user.getId());
+        UserFestival userFestival = findUserFestivalByUserIdAndProductId(product, user.getId());
+        checkMileageValid(participant.getMileage(), product);
 
         UserProduct userProduct = getUserProduct(userFestival, product);
         userProductJPARepository.save(userProduct);
     }
-    private UserFestival getUserFestivalByUserIdAndProductId(Product product, Long userId) {
+
+    private Participant findParticipantById(Long id) {
+        return participantJPARepository.findById(id).orElseThrow(
+                () -> new NotFoundException(BaseException.USER_NOT_FOUND)
+        );
+    }
+    private UserFestival findUserFestivalByUserIdAndProductId(Product product, Long userId) {
         Long festivalId = product.getFestival().getId();
-        return userFestivalJPARepository.getUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
+        return userFestivalJPARepository.findUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
                 () -> new NotFoundException(BaseException.USER_FESTIVAL_NOT_FOUND)
         );
     }
@@ -71,8 +81,8 @@ public class ProductWriteService {
                 () -> new NotFoundException(BaseException.PRODUCT_NOT_FOUND)
         );
     }
-    private void checkMileageValid(UserFestival userFestival, Product product) {
-        if (userFestival.getParticipant().getMileage() < product.getPrice()){
+    private void checkMileageValid(Long mileage, Product product) {
+        if (mileage < product.getPrice()){
             throw new BadRequestException(BaseException.PRODUCT_NO_MONEY);
         }
     }

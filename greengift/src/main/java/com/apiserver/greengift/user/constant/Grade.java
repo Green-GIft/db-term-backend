@@ -13,4 +13,12 @@ public enum Grade {
     ;
     @Getter
     private final String gradeName;
+
+    static public Grade getNextGrade(Grade grade){
+        if (grade == SEED) return SPROUT;
+        else if (grade == SPROUT) return TREE;
+        else if (grade == TREE) return FLOWER;
+        else if (grade == FLOWER) return FRUIT;
+        else return FRUIT;
+    }
 }

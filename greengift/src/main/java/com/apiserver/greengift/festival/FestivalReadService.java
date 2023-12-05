@@ -79,7 +79,7 @@ public class FestivalReadService {
         );
     }
     private UserFestival getUserFestival(Long userId, Long festivalId) {
-        return userFestivalJPARepository.getUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
+        return userFestivalJPARepository.findUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
                 () -> new NotFoundException(BaseException.USER_FESTIVAL_NOT_FOUND)
         );
     }

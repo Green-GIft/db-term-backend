@@ -42,6 +42,7 @@ public class UserRequest {
                     .username(username)
                     .mileage(0L)
                     .grade(Grade.SEED)
+                    .trashCount(0L)
                     .build();
         }
         public FestivalManager toFestivalManager(String encodedPassword) {
