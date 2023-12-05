@@ -40,11 +40,12 @@ public class FestivalWriteService {
     private final ProductJPARepository productJPARepository;
     private final UserFestivalJPARepository userFestivalJPARepository;
     private final UserProductJDBCRepository userProductJDBCRepository;
+    private final UserJPARepository userJPARepository;
 
     public void addFestival(User user, FestivalRequest.AddFestival requestDTO) {
         FestivalManager festivalManager = findFestivalManagerByUserId(user.getId());
-        LocalDate start_date = LocalDate.parse(requestDTO.start_date());
-        LocalDate end_date = LocalDate.parse(requestDTO.end_date());
+        LocalDate start_date = LocalDate.parse(requestDTO.startDate());
+        LocalDate end_date = LocalDate.parse(requestDTO.endDate());
 
         checkValidName(requestDTO.name());
         checkValidDate(start_date, end_date);
