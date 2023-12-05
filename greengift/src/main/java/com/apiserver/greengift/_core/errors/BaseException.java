@@ -27,6 +27,7 @@ public enum BaseException {
     FESTIVAL_DUPLICATED_USER("이미 등록된 유저입니다.", 400),
     FESTIVAL_RANDOM_FINISHED("이미 추첨이 완료된 축제입니다.", 400),
     FESTIVAL_RESULT_NOT_FOUND("존재하지 않는 축제 결과입니다.", 404),
+    FESTIVAL_CERTIFICATE_INVALID("이미 해당 축제는 인증되었습니다.", 400),
 
     PRODUCT_LIMIT_3("축제 당 상품은 3개까지 등록 가능합니다.", 400),
     PRODUCT_NOT_FOUND("존재하지 않는 상품입니다.", 404),
@@ -35,7 +36,10 @@ public enum BaseException {
 
     USER_FESTIVAL_NOT_FOUND("해당하는 유저 축제가 존재하지 않습니다.", 404),
 
-    USER_PRODUCT_NOT_FOUND("해당하는 축제의 당첨 결과가 존재하지 않습니다.", 404);
+    USER_PRODUCT_NOT_FOUND("해당하는 축제의 당첨 결과가 존재하지 않습니다.", 404),
+
+    TRASH_NOT_FOUND("존재하지 않는 쓰레기입니다.", 404),
+    TRASH_CATEGORY_WRONG("쓰레기 분류가 잘못되었습니다.", 400);
 
     @Getter
     private final String message;
