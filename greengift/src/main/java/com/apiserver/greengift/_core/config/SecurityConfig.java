@@ -77,6 +77,10 @@ public class SecurityConfig {
         // 11. 인증, 권한 필터 설정
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/festival/join"),
+                                new AntPathRequestMatcher("/festival/all")
+                        ).hasAnyAuthority("participant", "trash_manager")
 
                         .requestMatchers(
                                 new AntPathRequestMatcher("/user/grade"),
@@ -89,7 +93,7 @@ public class SecurityConfig {
                         ).hasAuthority("participant")
 
                         .requestMatchers(
-                                new AntPathRequestMatcher("/trash")
+                                new AntPathRequestMatcher("/trash/**")
                         ).hasAuthority("trash_manager")
 
                         .requestMatchers(
