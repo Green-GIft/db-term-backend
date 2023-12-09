@@ -36,11 +36,11 @@ public interface UserFestivalJPARepository extends JpaRepository<UserFestival, L
             "where u.user.email = :email and u.festival.id = :festivalId")
     Optional<UserFestival> findByEmailAndFestivalId(@Param("email") String email, @Param("festivalId") Long festivalId);
 
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update UserFestival u set u.status = 'FAIL' where u in :nonSelectedIdList")
     void updateFailStatus(List<UserFestival> nonSelectedIdList);
-    
-    @Modifying
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update UserFestival u set u.status = 'SUCCESS' where u in :userFestivalList")
     void updateSuccessStatus(List<UserFestival> userFestivalList);
 }
