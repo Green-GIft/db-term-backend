@@ -36,7 +36,7 @@ public class User {
     @Column
     private Long mileage;
 
-    @Column
+    @Column(name = "trash_count")
     private Long trashCount;
 
     @Transient

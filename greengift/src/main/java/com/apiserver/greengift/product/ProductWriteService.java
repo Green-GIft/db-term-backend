@@ -65,8 +65,8 @@ public class ProductWriteService {
     }
     private UserFestival findUserFestivalByUserIdAndProductId(Product product, Long userId) {
         Long festivalId = product.getFestival().getId();
-        return userFestivalJPARepository.findUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
-                () -> new NotFoundException(BaseException.USER_FESTIVAL_NOT_FOUND)
+        return userFestivalJPARepository.findUserFestivalByUserIdAndProductId(userId, festivalId).orElse(
+                UserFestival.builder().build()
         );
     }
     private UserProduct getUserProduct(UserFestival userFestival, Product product) {
