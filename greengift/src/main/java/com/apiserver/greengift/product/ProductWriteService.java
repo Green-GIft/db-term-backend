@@ -53,6 +53,7 @@ public class ProductWriteService {
         Participant participant = findParticipantById(user.getId());
         UserFestival userFestival = findUserFestivalByUserIdAndProductId(product, user.getId());
         checkMileageValid(participant.getMileage(), product);
+        participant.reduceMileage(product.getPrice());
 
         UserProduct userProduct = getUserProduct(userFestival, product);
         userProductJPARepository.save(userProduct);
@@ -65,8 +66,8 @@ public class ProductWriteService {
     }
     private UserFestival findUserFestivalByUserIdAndProductId(Product product, Long userId) {
         Long festivalId = product.getFestival().getId();
-        return userFestivalJPARepository.findUserFestivalByUserIdAndProductId(userId, festivalId).orElse(
-                UserFestival.builder().build()
+        return userFestivalJPARepository.findUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
+                () -> new BadRequestException(BaseException.PRODUCT_CANNOT_BUY)
         );
     }
     private UserProduct getUserProduct(UserFestival userFestival, Product product) {

@@ -33,6 +33,7 @@ public enum BaseException {
     PRODUCT_NOT_FOUND("존재하지 않는 상품입니다.", 404),
     PRODUCT_NO_AMOUNT("상품의 재고다 모두 소진되었습니다.", 400),
     PRODUCT_NO_MONEY("상품을 구매할 마일리지가 부족합니다.", 400),
+    PRODUCT_CANNOT_BUY("아직 참여하지 않은 축제이므로 구매할 수 없습니다.", 400),
 
     USER_FESTIVAL_NOT_FOUND("해당하는 유저 축제가 존재하지 않습니다.", 404),
 

@@ -52,4 +52,8 @@ public class User {
     public void updateGrade(Grade grade){
         this.grade = grade;
     }
+
+    public void reduceMileage(Long price){
+        this.mileage = this.mileage - price;
+    }
 }
