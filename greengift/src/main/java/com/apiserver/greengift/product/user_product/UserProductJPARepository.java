@@ -9,15 +9,14 @@ import java.util.Optional;
 
 public interface UserProductJPARepository extends JpaRepository<UserProduct, Long> {
 
-    @Query("select u from UserProduct u join fetch u.userFestival uf " +
-            "join fetch u.product " +
-            "join fetch uf.user p " +
-            "join fetch uf.festival uff " +
-            "where uff.id = :festivalId and p.id = :userId and u.category = 'FESTIVAL'")
+    @Query("select u from UserProduct u " +
+            "join fetch u.product p1 " +
+            "join fetch p1.festival f "+
+            "join fetch u.user p2 " +
+            "where f.id = :festivalId and p2.id = :userId and u.category = 'FESTIVAL'")
     Optional<UserProduct> findByUserIdAndFestivalId(@Param("userId") Long userId, @Param("festivalId") Long festivalId);
 
-    @Query("select u from UserProduct u join fetch u.userFestival uf " +
-            "join fetch uf.user p join fetch u.product " +
+    @Query("select u from UserProduct u join fetch u.user p " +
             "where p.id = :userId ")
     List<UserProduct> findByUserId(Long userId);
 }

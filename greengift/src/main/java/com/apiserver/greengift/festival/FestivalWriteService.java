@@ -15,6 +15,7 @@ import com.apiserver.greengift.user.User;
 import com.apiserver.greengift.user.UserJPARepository;
 import com.apiserver.greengift.user.festival_manager.FestivalManager;
 import com.apiserver.greengift.user.festival_manager.FestivalManagerJPARepository;
+import com.apiserver.greengift.user.participant.Participant;
 import com.apiserver.greengift.user.participant.ParticipantJPARepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,9 +91,9 @@ public class FestivalWriteService {
     private void addUserProduct(List<UserFestival> userFestivalList, List<Product> productList){
         List<UserProduct> userProductList = new ArrayList<>();
         for (int i=0; i<3; i++){
-            UserFestival userFestival = userFestivalList.get(i);
+            User user = userFestivalList.get(i).getUser();
             Product product = productList.get(i);
-            UserProduct userProduct = getUserProduct(userFestival, product);
+            UserProduct userProduct = getUserProduct(product, user);
             userProductList.add(userProduct);
         }
         userFestivalJPARepository.updateSuccessStatus(userFestivalList);
@@ -114,10 +115,10 @@ public class FestivalWriteService {
             throw new BadRequestException(BaseException.FESTIVAL_DATE_INVALID);
         }
     }
-    private UserProduct getUserProduct(UserFestival userFestival, Product product){
+    private UserProduct getUserProduct(Product product, User user){
         return UserProduct.builder()
-                .userFestival(userFestival)
                 .product(product)
+                .user(user)
                 .category(ProductCategory.FESTIVAL)
                 .build();
     }

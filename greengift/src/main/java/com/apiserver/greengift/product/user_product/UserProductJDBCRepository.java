@@ -21,7 +21,7 @@ public class UserProductJDBCRepository {
     public void batchInsertUserProduct(List<UserProduct> userProductList){
         String TABLE_NAME = "user_product_tb";
         String sql = String.format("""
-                INSERT INTO %s (product_category, product_id, user_festival_id)
+                INSERT INTO %s (product_category, product_id, user_id)
                 VALUES (?, ?, ?)
                 """, TABLE_NAME);
 
@@ -32,7 +32,7 @@ public class UserProductJDBCRepository {
                 (ps, userProduct) -> {
                     ps.setString(1, userProduct.getCategory().name());
                     ps.setLong(2, userProduct.getProduct().getId());
-                    ps.setLong(3, userProduct.getUserFestival().getId());
+                    ps.setLong(3, userProduct.getUser().getId());
                 });
     }
 }

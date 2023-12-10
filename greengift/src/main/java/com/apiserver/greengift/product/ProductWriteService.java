@@ -8,7 +8,6 @@ import com.apiserver.greengift._core.errors.exception.UnauthorizedException;
 import com.apiserver.greengift.festival.Festival;
 import com.apiserver.greengift.festival.FestivalJPARepository;
 import com.apiserver.greengift.festival.FestivalRequest;
-import com.apiserver.greengift.festival.user_festival.UserFestival;
 import com.apiserver.greengift.festival.user_festival.UserFestivalJPARepository;
 import com.apiserver.greengift.product.constant.ProductCategory;
 import com.apiserver.greengift.product.user_product.UserProduct;
@@ -32,7 +31,6 @@ public class ProductWriteService {
     private final FestivalJPARepository festivalJPARepository;
     private final ProductJPARepository productJPARepository;
     private final UserProductJPARepository userProductJPARepository;
-    private final UserFestivalJPARepository userFestivalJPARepository;
     private final ParticipantJPARepository participantJPARepository;
 
     public void addProduct(User user, FestivalRequest.AddProduct requestDTO, Long festivalId) {
@@ -51,11 +49,10 @@ public class ProductWriteService {
         checkProductAmount(product);
 
         Participant participant = findParticipantById(user.getId());
-        UserFestival userFestival = findUserFestivalByUserIdAndProductId(product, user.getId());
         checkMileageValid(participant.getMileage(), product);
         participant.reduceMileage(product.getPrice());
 
-        UserProduct userProduct = getUserProduct(userFestival, product);
+        UserProduct userProduct = getUserProduct(product, participant);
         userProductJPARepository.save(userProduct);
     }
 
@@ -64,17 +61,11 @@ public class ProductWriteService {
                 () -> new NotFoundException(BaseException.USER_NOT_FOUND)
         );
     }
-    private UserFestival findUserFestivalByUserIdAndProductId(Product product, Long userId) {
-        Long festivalId = product.getFestival().getId();
-        return userFestivalJPARepository.findUserFestivalByUserIdAndProductId(userId, festivalId).orElseThrow(
-                () -> new BadRequestException(BaseException.PRODUCT_CANNOT_BUY)
-        );
-    }
-    private UserProduct getUserProduct(UserFestival userFestival, Product product) {
+    private UserProduct getUserProduct(Product product, User user) {
         return UserProduct.builder()
                 .category(ProductCategory.MILEAGE)
                 .product(product)
-                .userFestival(userFestival)
+                .user(user)
                 .build();
     }
     private Product getProductById(Long productId) {
