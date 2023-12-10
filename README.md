@@ -58,6 +58,7 @@
 ## 주요 기능
 
 > 축제 참가자용 안드로이드 애플리케이션입니다. 축제 관리자와 쓰레기 관리자는 시간상의 이유로 API만 제작했습니다.
+
 https://github.com/Green-GIft/db-term-backend/assets/84652886/7eb7ae47-f0e6-4eee-b99d-62e0d40dc9e1
 
 ### 공통 기능
